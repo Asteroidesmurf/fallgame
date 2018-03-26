@@ -10,33 +10,28 @@ export default class Game {
   }
 
   images = [
-  'images/icon.png',
-  'images/icon.png',
-  'images/icon.png',
-  'images/smiley.gif'
+  'src/images/icon.png',
+  'src/images/icon.png',
+  'src/images/icon.png',
+  'src/images/smiley.gif'
 	]
-
-  canvas = {
-    ctx: null,
-    width: null,
-    height: null
-  }
 
   mousePosition = {
     x: null,
     y: null
   }
-  
+
   elements = []
 	score = null
-	spawnChance = 0.03
+	spawnChance = 0.015
 	id = null
 
-  constructor (ctx, initialWidth, initialHeight) {
+  constructor (ctx, canvasWidth, canvasHeight) {
     this.canvas.ctx = ctx
-    this.mousePosition.x = initialWidth / 2
-    this.mousePosition.y = initialHeight / 2
+    this.canvas.width = canvasWidth
+    this.canvas.height = canvasHeight
     this.id = 0
+    this.score = 0
 
     this.registerEventListeners()
 
@@ -49,14 +44,13 @@ export default class Game {
 	}
 
 	generate() {
-		if (Math.random() < spawnChance) {
-    	const x = numberBetween(10, canvas.width - 100)
+		if (Math.random() < this.spawnChance && this.elements.length < 2) {
+    	const x = numberBetween(10, this.canvas.width - 100)
     	const y = -100
     	const dy = 3
+    	const img = randomArrayItem(this.images)
 
-    	img = randomArrayItem(images)
-
-    	element = new Element(this.canvas.ctx, this.id, x, y, dy, img)
+    	const element = new Element(this.canvas.ctx, this.id, x, y, dy, img)
     	element.init()
 
     	this.id++
@@ -64,18 +58,6 @@ export default class Game {
     	this.elements.push(element)
     }
 	}
-
-  animate () {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
-    this.elements.forEach(element => {
-      element.update()
-    })
-
-    generate();
-
-    requestAnimationFrame(this.animate.bind(this))
-  }
 
   checkHit(x, y) {
 		this.elements = this.elements.filter((element) => {
@@ -85,7 +67,7 @@ export default class Game {
 		      y >= element.y &&
 		      y <= element.y + element.image.height
 		    ) {
-		      points = this.canvas.height - element.y
+		      const points = this.canvas.height - element.y
 		      this.addScore(points)
 
 		      return false
@@ -103,4 +85,27 @@ export default class Game {
 		})
 	}
 
+	init() {
+	  this.elements = []
+  	this.id = 0
+	}
+
+  animate () {
+    this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    
+    this.canvas.ctx.font = "20px Arial"
+		this.canvas.ctx.fillStyle = "white"
+  	this.canvas.ctx.textAlign = "left"
+  	this.canvas.ctx.fillText("score: " + this.score, 10 , 25)
+    
+    this.elements.forEach(element => {
+      element.update()
+    })
+
+    this.generate()
+
+    this.elements = this.elements.filter(element => element.y < this.canvas.height)
+
+    requestAnimationFrame(this.animate.bind(this))
+  }
 }

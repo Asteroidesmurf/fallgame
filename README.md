@@ -1,6 +1,4 @@
-# Canvas Circle
-
-Canvas sample project based on [Chris Courses](https://www.youtube.com/watch?v=EO6OkltgudE&list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL).
+# Canvas Fallgame ES6 version
 
 ## Installation
 First install dependencies:

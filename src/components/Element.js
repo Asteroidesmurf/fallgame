@@ -7,7 +7,7 @@ export default class Element {
   imgSrc = null
   image = null
 
-  constructor() {
+  constructor(ctx, id, x, y, dy, imgSrc) {
     this.ctx = ctx
     this.id = id
     this.x = x
@@ -22,7 +22,7 @@ export default class Element {
 
     this.image.onload = function () {
       this.draw = function () {
-        ctx.drawImage(this.image, this.x, this.y)
+        this.ctx.drawImage(this.image, this.x, this.y)
       }
     }.bind(this)
 
@@ -35,6 +35,5 @@ export default class Element {
       this.draw()
     }
 
-    elements = elements.filter(element => element.y < canvas.height)
   }
 }
