@@ -6,14 +6,19 @@ export default class Element {
   dy = null
   imgSrc = null
   image = null
+  evil = null
+  bonus = null
 
-  constructor(ctx, id, x, y, dy, imgSrc) {
+  constructor(ctx, id, x, y, dy, item) {
     this.ctx = ctx
     this.id = id
     this.x = x
     this.y = y
     this.dy = dy
-    this.imgSrc = imgSrc
+    this.imgSrc = item[0]
+    this.evil = item[1]
+    this.bonus = item[2]
+
     this.image = null
   }
 
