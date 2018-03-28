@@ -1,4 +1,5 @@
-# Canvas Fallgame ES6 version
+# Canvas Fallgame ES6 canvas version
+Canvas fallgame based upon [BrandedGames](http://fallgame.brandedgames.nl/).
 
 ## Installation
 First install dependencies:
