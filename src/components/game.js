@@ -43,6 +43,9 @@ export default class Game {
 	score = null
 	spawnChance = 0.015
 	id = null
+	startTime = Date.now()
+	time = null
+	playTime = null
 	maxElementSize = null
 	background = new Image()
 	staticBackground = new Image()
@@ -54,9 +57,11 @@ export default class Game {
     this.id = 0
     this.score = 0
     this.maxElementSize = 100
-		this.evilSound = new this.Sound(this.sounds.evil)
-		this.bonusSound = new this.Sound(this.sounds.bonus)
-    this.normalSound = new this.Sound(this.sounds.normal)
+    this.playTime = 3
+    this.time = this.playTime
+		this.evilSound = new this.sound(this.sounds.evil)
+		this.bonusSound = new this.sound(this.sounds.bonus)
+    this.normalSound = new this.sound(this.sounds.normal)
     
     this.backgroundOffset = {
     	x: 0,
@@ -78,7 +83,7 @@ export default class Game {
 	}
 
 	// Function for creating and playing sound elements
-	Sound (src) {
+	sound (src) {
     this.sound = document.createElement("audio")
     this.sound.src = src
     this.sound.setAttribute("preload", "auto")
@@ -90,6 +95,11 @@ export default class Game {
     		this.sound.currentTime = 0;
         this.sound.play()
     }
+	}
+
+	timer () {
+		let elapsed =((Date.now() - this.startTime) / 1000)
+		this.time = (this.playTime - elapsed).toFixed(1)
 	}
 
 	// Function for generation of elements
@@ -165,58 +175,68 @@ export default class Game {
 
 	// Handles animation of canvas
   animate () {
-    // clears background
-    this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-  	
-  	// sets source of background images 
-  	this.background.src = 'src/images/moving_bg.png'
-  	this.staticBackground.src = 'src/images/game_bg.png'
-  	
-  	// controls background movement
-  	if (this.canvas.width + this.backgroundOffset.x < 2528) {
-  		this.backgroundOffset.x += this.backgroundVelocity.x
-  	}
-  	if (this.backgroundOffset.y < -200) {
-  		this.backgroundOffset.y += this.backgroundVelocity.y
-  	} 
-  	
-  	// draws moving background
-  	this.canvas.ctx.save()
-  	this.canvas.ctx.translate(-this.backgroundOffset.x, this.backgroundOffset.y)
-  	this.canvas.ctx.drawImage(this.background, 0, 0)
-    this.canvas.ctx.restore()
+	  	if(this.time > 0) {
+	    // clears background
+	    this.canvas.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+	  	
+	  	// sets source of background images 
+	  	this.background.src = 'src/images/moving_bg.png'
+	  	this.staticBackground.src = 'src/images/game_bg.png'
+	  	
+	  	// controls background movement
+	  	if (this.canvas.width + this.backgroundOffset.x < 2528) {
+	  		this.backgroundOffset.x += this.backgroundVelocity.x
+	  	}
+	  	if (this.backgroundOffset.y < -200) {
+	  		this.backgroundOffset.y += this.backgroundVelocity.y
+	  	} 
+	  	
+	  	// draws moving background
+	  	this.canvas.ctx.save()
+	  	this.canvas.ctx.translate(-this.backgroundOffset.x, this.backgroundOffset.y)
+	  	this.canvas.ctx.drawImage(this.background, 0, 0)
+	    this.canvas.ctx.restore()
 
-    // draws static background
-    this.canvas.ctx.drawImage(this.staticBackground, 0, 0)
+	    // draws static background
+	    this.canvas.ctx.drawImage(this.staticBackground, 0, 0)
 
-    // draws score in upper left corner
-    this.canvas.ctx.font = "20px Arial"
-		this.canvas.ctx.fillStyle = "white"
-  	this.canvas.ctx.textAlign = "left"
-  	this.canvas.ctx.fillText("score: " + this.score, 10 , 25)
-    
+	    // draws score in upper left corner
+	    this.canvas.ctx.font = "20px Arial"
+			this.canvas.ctx.fillStyle = "white"
+	  	this.canvas.ctx.textAlign = "left"
+	  	this.canvas.ctx.fillText("Score: " + this.score, 10 , 25)
+	    
+	    // draws timer next to score
+	    this.timer()
+	    this.canvas.ctx.font = "20px Arial"
+			this.canvas.ctx.fillStyle = "white"
+	  	this.canvas.ctx.textAlign = "left"
+	  	this.canvas.ctx.fillText("Time: " + this.time, 150 , 25)
 
-  	// draws the falling elements
-    this.elements.forEach(element => {
-      element.update()
-    })
-  	
-  	// draws explosions
-    this.explosions.forEach(explosion => {
-      explosion.update()
-    })
+	  	// draws the falling elements
+	    this.elements.forEach(element => {
+	      element.update()
+	    })
+	  	
+	  	// draws explosions
+	    this.explosions.forEach(explosion => {
+	      explosion.update()
+	    })
 
-    // generates new elements
-    this.generate()
+	    // generates new elements
+	    this.generate()
 
-    // removes elements that are beyond the edge of the canvas
-    this.elements = this.elements.filter(element => element.y < this.canvas.height)
+	    // removes elements that are beyond the edge of the canvas
+	    this.elements = this.elements.filter(element => element.y < this.canvas.height)
 
-    // removes explosions that are done
-    this.explosions = this.explosions.filter(explosion => explosion.lifetimeLeft > 0)
+	    // removes explosions that are done
+	    this.explosions = this.explosions.filter(explosion => explosion.lifetimeLeft > 0)
 
-    // calls animation when next frame is ready
-    requestAnimationFrame(this.animate.bind(this))
+	    // calls animation when next frame is ready
+	    requestAnimationFrame(this.animate.bind(this))
+	  }	else {
+	  	// Insert end of game screen below
+	  }
   }
 
 }
