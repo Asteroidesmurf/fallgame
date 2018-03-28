@@ -1,4 +1,4 @@
-export default class Element {
+export default class Explosion {
   ctx = null
   width = null
   height = null

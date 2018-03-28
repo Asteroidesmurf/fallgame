@@ -1,6 +1,5 @@
 import Element from './Element'
 import Explosion from './Explosion'
-
 import { randomArrayItem, numberBetween } from './Utilities'
 
 export default class Game {
@@ -20,6 +19,12 @@ export default class Game {
   ['src/images/item-table.png',  false, false],
   ['src/images/item-window.png',  false, false]
 	]
+	sounds = {
+		normal: "src/sounds/normal.mp3",
+		evil: "src/sounds/bad.mp3",
+		bonus: "src/sounds/bonus.mp3"
+	}
+
   mousePosition = {
     x: null,
     y: null
@@ -32,19 +37,14 @@ export default class Game {
 		x: null,
 		y: null
 	}
-	sounds = {
-		normal: "src/sounds/normal.mp3",
-		evil: "src/sounds/bad.mp3",
-		bonus: "src/sounds/bonus.mp3"
-	}
 
+	spawnChance = 0.015
   elements = []
   explosions = []
 	score = null
-	spawnChance = 0.015
 	id = null
-	startTime = Date.now()
-	time = null
+	startTime = null
+	Time = null
 	playTime = null
 	maxElementSize = null
 	background = new Image()
@@ -56,13 +56,16 @@ export default class Game {
     this.canvas.height = canvasHeight
     this.id = 0
     this.score = 0
-    this.maxElementSize = 100
+    this.startTime = Date.now()
     this.playTime = 30
     this.time = this.playTime
-		this.evilSound = new this.sound(this.sounds.evil)
-		this.bonusSound = new this.sound(this.sounds.bonus)
-    this.normalSound = new this.sound(this.sounds.normal)
+    this.maxElementSize = 100
     
+		this.gameSounds = {
+			evil: new this.sound(this.sounds.evil),
+			bonus: new this.sound(this.sounds.bonus),
+			normal: new this.sound(this.sounds.normal)
+		}
     this.backgroundOffset = {
     	x: 0,
     	y: -514
@@ -102,12 +105,13 @@ export default class Game {
 		this.time = (this.playTime - elapsed).toFixed(1)
 	}
 
-	// Function for generation of elements
-		// contains static variables for:
-		// spawn y position (y)
-		// fall speed (dy)
-		//
-		// always keeps 10 px clear of sides of canvas
+	/** 
+	Function for generation of elements
+	contains static variables for:
+		spawn y position (y)
+		fall speed (dy)
+		always keeps 10 px clear of sides of canvas
+	**/
 	generate() {
 		if (Math.random() < this.spawnChance && this.elements.length < 2) {
     	const x = numberBetween(10, this.canvas.width - (this.maxElementSize + 10))
@@ -137,18 +141,18 @@ export default class Game {
 	    	// if element is evil
 	    	if (element.evil) {
 	    		this.addScore(-points)
-	    		this.evilSound.play()
+	    		this.gameSounds.evil.play()
  	    		this.explosions.push(new Explosion(this.canvas.ctx, this.canvas.width, this.canvas.height))
 	    	} 
 	    	// else if sound has bonus
 	    	else if (element.bonus) {
 	      	this.addScore(points * 2)
-	    		this.bonusSound.play()
+	    		this.gameSounds.bonus.play()
 	    	} 
 	    	// else item is normal
 	    	else {
 	      	this.addScore(points)
-	    		this.normalSound.play()
+	    		this.gameSounds.normal.play()
 	    	}
 
 	      return false
