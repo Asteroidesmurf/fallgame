@@ -1,4 +1,6 @@
 import Element from './Element'
+import Explosion from './Explosion'
+
 import { randomArrayItem, numberBetween } from './Utilities'
 
 export default class Game {
@@ -37,6 +39,7 @@ export default class Game {
 	}
 
   elements = []
+  explosions = []
 	score = null
 	spawnChance = 0.015
 	id = null
@@ -125,6 +128,7 @@ export default class Game {
 	    	if (element.evil) {
 	    		this.addScore(-points)
 	    		this.evilSound.play()
+ 	    		this.explosions.push(new Explosion(this.canvas.ctx, this.canvas.width, this.canvas.height))
 	    	} 
 	    	// else if sound has bonus
 	    	else if (element.bonus) {
@@ -196,12 +200,20 @@ export default class Game {
     this.elements.forEach(element => {
       element.update()
     })
+  	
+  	// draws explosions
+    this.explosions.forEach(explosion => {
+      explosion.update()
+    })
 
     // generates new elements
     this.generate()
 
     // removes elements that are beyond the edge of the canvas
     this.elements = this.elements.filter(element => element.y < this.canvas.height)
+
+    // removes explosions that are done
+    this.explosions = this.explosions.filter(explosion => explosion.lifetimeLeft > 0)
 
     // calls animation when next frame is ready
     requestAnimationFrame(this.animate.bind(this))

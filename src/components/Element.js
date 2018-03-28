@@ -9,8 +9,6 @@ export default class Element {
   evil = null
   bonus = null
 
-
-
   constructor(ctx, id, x, y, dy, item) {
     this.ctx = ctx
     this.id = id
