@@ -57,7 +57,7 @@ export default class Game {
     this.id = 0
     this.score = 0
     this.maxElementSize = 100
-    this.playTime = 3
+    this.playTime = 30
     this.time = this.playTime
 		this.evilSound = new this.sound(this.sounds.evil)
 		this.bonusSound = new this.sound(this.sounds.bonus)
@@ -236,6 +236,7 @@ export default class Game {
 	    requestAnimationFrame(this.animate.bind(this))
 	  }	else {
 	  	// Insert end of game screen below
+	  	console.log(this.score)
 	  }
   }
 
