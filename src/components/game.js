@@ -79,9 +79,9 @@ export default class Game {
     this.sound = document.createElement("audio")
     this.sound.src = src
     this.sound.setAttribute("preload", "auto")
-    this.sound.setAttribute("controls", "none")
+    this.sound.setAttribute("controls", "controls")
     this.sound.setAttribute("type", "mp3")
-    this.sound.style.display = "none"
+    this.sound.style.display = "show"
     document.body.appendChild(this.sound)
     this.play = function() {
         this.sound.play()
@@ -108,7 +108,6 @@ export default class Game {
     	element.init()
 
     	this.id++
-  		this.normalSound.play()
     	this.elements.push(element)
     }
 	}
